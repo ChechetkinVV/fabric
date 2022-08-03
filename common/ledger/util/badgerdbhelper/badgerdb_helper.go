@@ -10,7 +10,8 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
-	"sync"
+
+	//"sync"
 
 	badger "github.com/dgraph-io/badger/v3"
 	"github.com/hyperledger/fabric/common/flogging"
@@ -35,7 +36,7 @@ type DB struct {
 	conf    *Conf
 	db      *badger.DB
 	dbState dbState
-	mutex   sync.RWMutex
+	//mutex   sync.RWMutex
 
 	//readOpts        *opt.ReadOptions
 	//writeOptsNoSync *opt.WriteOptions
@@ -60,8 +61,8 @@ func CreateDB(conf *Conf) *DB {
 
 // Open opens the underlying db
 func (dbInst *DB) Open() {
-	dbInst.mutex.Lock()
-	defer dbInst.mutex.Unlock()
+	//dbInst.mutex.Lock()
+	//defer dbInst.mutex.Unlock()
 	if dbInst.dbState == opened {
 		return
 	}
@@ -84,8 +85,8 @@ func (dbInst *DB) Open() {
 
 // IsEmpty returns whether or not a database is empty
 func (dbInst *DB) IsEmpty() (bool, error) {
-	dbInst.mutex.RLock()
-	defer dbInst.mutex.RUnlock()
+	//dbInst.mutex.RLock()
+	//defer dbInst.mutex.RUnlock()
 	var hasItems bool
 	opts := badger.DefaultIteratorOptions
 	opts.PrefetchValues = false
@@ -102,8 +103,8 @@ func (dbInst *DB) IsEmpty() (bool, error) {
 
 // Close closes the underlying db
 func (dbInst *DB) Close() {
-	dbInst.mutex.Lock()
-	defer dbInst.mutex.Unlock()
+	//dbInst.mutex.Lock()
+	//defer dbInst.mutex.Unlock()
 	if dbInst.dbState == closed {
 		return
 	}
@@ -115,8 +116,8 @@ func (dbInst *DB) Close() {
 
 // Get returns the value for the given key
 func (dbInst *DB) Get(key []byte) ([]byte, error) {
-	dbInst.mutex.RLock()
-	defer dbInst.mutex.RUnlock()
+	//dbInst.mutex.RLock()
+	//defer dbInst.mutex.RUnlock()
 	var value []byte
 	err := dbInst.db.View(func(txn *badger.Txn) error {
 		item, err := txn.Get(key)
@@ -142,8 +143,8 @@ func (dbInst *DB) Get(key []byte) ([]byte, error) {
 
 // Put saves the key/value
 func (dbInst *DB) Put(key []byte, value []byte, sync bool) error {
-	dbInst.mutex.RLock()
-	defer dbInst.mutex.RUnlock()
+	//dbInst.mutex.RLock()
+	//defer dbInst.mutex.RUnlock()
 	//wo := dbInst.writeOptsNoSync
 	/*if sync {
 		wo = dbInst.writeOptsSync
@@ -161,8 +162,8 @@ func (dbInst *DB) Put(key []byte, value []byte, sync bool) error {
 
 // Delete deletes the given key
 func (dbInst *DB) Delete(key []byte, sync bool) error {
-	dbInst.mutex.RLock()
-	defer dbInst.mutex.RUnlock()
+	//dbInst.mutex.RLock()
+	//defer dbInst.mutex.RUnlock()
 	/*wo := dbInst.writeOptsNoSync
 	if sync {
 		wo = dbInst.writeOptsSync
@@ -209,8 +210,8 @@ func (itr *RangeIterator) Key() []byte {
 // The resultset contains all the keys that are present in the db between the startKey (inclusive) and the endKey (exclusive).
 // A nil startKey represents the first available key and a nil endKey represent a logical key after the last available key
 func (dbInst *DB) GetIterator(startKey []byte, endKey []byte) RangeIterator {
-	dbInst.mutex.RLock()
-	defer dbInst.mutex.RUnlock()
+	//dbInst.mutex.RLock()
+	//defer dbInst.mutex.RUnlock()
 	txn := dbInst.db.NewTransaction(true)
 	defer txn.Discard()
 	/*err := dbInst.db.View(func(txn *badger.Txn) error {
@@ -233,8 +234,8 @@ func (dbInst *DB) GetIterator(startKey []byte, endKey []byte) RangeIterator {
 
 // WriteBatch writes a batch
 func (dbInst *DB) WriteBatch(batch *badger.WriteBatch, sync bool) error {
-	dbInst.mutex.RLock()
-	defer dbInst.mutex.RUnlock()
+	//dbInst.mutex.RLock()
+	//defer dbInst.mutex.RUnlock()
 	/*wo := dbInst.writeOptsNoSync
 	if sync {
 		wo = dbInst.writeOptsSync
